@@ -1,3 +1,4 @@
+*.vs
 API/obj
 API/bin
 Application/obj
