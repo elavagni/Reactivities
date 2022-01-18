@@ -1,5 +1,6 @@
 using Application.Activities;
 using Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
@@ -17,8 +18,6 @@ namespace API.Controllers
         {
             var result =  await Mediator.Send(new Details.Query { Id = id });
             return HandleResult(result);
-
-     
         }
 
         [HttpPost]
