@@ -7,4 +7,6 @@ Domain/obj
 Domain/bin
 Persistence/obj
 Persistence/bin
+Infrastructure/obj
+Infrastructure/bin
 client-app/node_modules
