@@ -1,6 +1,7 @@
 *.vs
 API/obj
 API/bin
+API/appsettings.json
 Application/obj
 Application/bin
 Domain/obj
