@@ -19,7 +19,7 @@ namespace API.Controllers
     private readonly UserManager<AppUser> _userManager;
     private readonly SignInManager<AppUser> _signInManager;
     private readonly TokenService _tokenService;
-    public AccountController(UserManager<AppUser> userManager,     
+    public AccountController(UserManager<AppUser> userManager,
       SignInManager<AppUser> signInManager, TokenService tokenService)
     {
       _tokenService = tokenService;
@@ -29,7 +29,7 @@ namespace API.Controllers
 
 
     [HttpPost("login")]
-    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto) 
+    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
     {
       var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
@@ -37,11 +37,11 @@ namespace API.Controllers
 
       var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
-      if (result.Succeeded) 
+      if (result.Succeeded)
       {
         return CreateUserObject(user);
       }
-      return Unauthorized();      
+      return Unauthorized();
     }
 
     [HttpPost("register")]
@@ -54,12 +54,12 @@ namespace API.Controllers
       }
 
       if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.UserName))
-      {        
-        ModelState.AddModelError("Username", "Username taken");
+      {
+        ModelState.AddModelError("UserName", "UserName taken");
         return ValidationProblem();
       }
 
-      var user = new AppUser 
+      var user = new AppUser
       {
         DisplayName = registerDto.DisplayName,
         Email = registerDto.Email,
@@ -68,7 +68,7 @@ namespace API.Controllers
 
       var result = await _userManager.CreateAsync(user, registerDto.Password);
 
-      if (result.Succeeded) 
+      if (result.Succeeded)
       {
         return CreateUserObject(user);
       }
@@ -79,22 +79,22 @@ namespace API.Controllers
 
     [Authorize]
     [HttpGet]
-    public async Task<ActionResult<UserDto>> GetCurrentUser() 
+    public async Task<ActionResult<UserDto>> GetCurrentUser()
     {
-        var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
-        return CreateUserObject(user);
+      var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+      return CreateUserObject(user);
     }
 
 
     private UserDto CreateUserObject(AppUser user)
     {
-      return new UserDto 
-        {
-          DisplayName  =user.DisplayName, 
-          Image = null, 
-          Token= _tokenService.CreateToken(user),
-          UserName = user.UserName
-        };
+      return new UserDto
+      {
+        DisplayName = user.DisplayName,
+        Image = null,
+        Token = _tokenService.CreateToken(user),
+        UserName = user.UserName
+      };
     }
 
 
