@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Application.Core;
-using Application.Profiles;
+using Application.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using MediatR;
@@ -24,9 +20,11 @@ namespace Application.Followers
         {
             private readonly DataContext _context;
             private readonly IMapper _maper;
+            private readonly IUserAccessor _userAccessor;
 
-            public Handler(DataContext context, IMapper maper)
+            public Handler(DataContext context, IMapper maper, IUserAccessor userAccessor)
             {
+                this._userAccessor = userAccessor;
                 this._maper = maper;
                 this._context = context;
 
@@ -41,13 +39,15 @@ namespace Application.Followers
                     case "followers":
                         profiles = await _context.UserFollowings.Where(x => x.Target.UserName == request.UserName)
                             .Select(u => u.Observer)
-                            .ProjectTo<Profiles.Profile>(_maper.ConfigurationProvider)
+                            .ProjectTo<Profiles.Profile>(_maper.ConfigurationProvider,
+                                new { currentUserName = _userAccessor.GetUserName() })
                             .ToListAsync();
                         break;
                     case "following":
                         profiles = await _context.UserFollowings.Where(x => x.Observer.UserName == request.UserName)
                             .Select(u => u.Target)
-                            .ProjectTo<Profiles.Profile>(_maper.ConfigurationProvider)
+                            .ProjectTo<Profiles.Profile>(_maper.ConfigurationProvider,
+                               new { currentUserName = _userAccessor.GetUserName() })
                             .ToListAsync();
                         break;
                 }
