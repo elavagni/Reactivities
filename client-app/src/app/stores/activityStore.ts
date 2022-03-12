@@ -187,4 +187,18 @@ export default class ActivityStore {
   clearSelectedActivity = () => {
     this.selectedActivity = undefined;
   };
+
+  //Update the current logged user to follow or unfollow the given user
+  updateAttendeeFollowing = (userName: string) => {
+    //loop over all activities
+    this.activityRegistry.forEach((activity) => {
+      //loop over all attendees
+      activity.attendees.forEach((attendee) => {
+        if (attendee.userName === userName) {
+          attendee.following ? attendee.followersCount-- : attendee.followersCount++;
+          attendee.following = !attendee.following;
+        }
+      });
+    });
+  };
 }
