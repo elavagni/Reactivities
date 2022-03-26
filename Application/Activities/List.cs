@@ -12,7 +12,7 @@ namespace Application.Activities
     {
         public class Query : IRequest<Result<PagedList<ActivityDto>>>
         {
-            public PagingParams Params { get; set; }
+            public ActivityParams Params { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Result<PagedList<ActivityDto>>>
@@ -29,10 +29,26 @@ namespace Application.Activities
 
             public async Task<Result<PagedList<ActivityDto>>> Handle(Query request, CancellationToken cancellationToken)
             {
+                //This is just an expression tree, we are not querying the database here as we are returning a IQueryable
                 var query = _context.Activities
+                    .Where(d => d.Date >= request.Params.StartDate)
                     .OrderBy(d => d.Date)
                     .ProjectTo<ActivityDto>(_maper.ConfigurationProvider, new { currentUserName = _userAccessor.GetUserName() })
                     .AsQueryable();
+
+                //Filter the events to the ones the current logged-in user is attending
+                if (request.Params.IsGoing && !request.Params.IsHost)
+                {
+
+                    query = query.Where(x => x.Attendees.Any(a => a.UserName == _userAccessor.GetUserName()));
+                }
+
+                //Filter the events to the ones the current logged-in user is hosting. The IsGoing below corresponds to what the user selected in the filters
+                //not the actual DB value.
+                if (request.Params.IsHost && !request.Params.IsGoing)
+                {
+                    query = query.Where(x => x.HostUsename == _userAccessor.GetUserName());
+                }
 
                 //Since we are using project, we don't have to map our activities 
                 //var activitiesToReturn = _maper.Map<List<ActivityDto>>(activities);
