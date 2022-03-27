@@ -18,12 +18,12 @@ namespace Application.Activities
         public class Handler : IRequestHandler<Query, Result<PagedList<ActivityDto>>>
         {
             private readonly DataContext _context;
-            private readonly IMapper _maper;
+            private readonly IMapper _mapper;
             private readonly IUserAccessor _userAccessor;
-            public Handler(DataContext context, IMapper maper, IUserAccessor userAccessor)
+            public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
             {
                 this._userAccessor = userAccessor;
-                _maper = maper;
+                _mapper = mapper;
                 _context = context;
             }
 
@@ -33,7 +33,7 @@ namespace Application.Activities
                 var query = _context.Activities
                     .Where(d => d.Date >= request.Params.StartDate)
                     .OrderBy(d => d.Date)
-                    .ProjectTo<ActivityDto>(_maper.ConfigurationProvider, new { currentUserName = _userAccessor.GetUserName() })
+                    .ProjectTo<ActivityDto>(_mapper.ConfigurationProvider, new { currentUserName = _userAccessor.GetUserName() })
                     .AsQueryable();
 
                 //Filter the events to the ones the current logged-in user is attending
@@ -51,7 +51,7 @@ namespace Application.Activities
                 }
 
                 //Since we are using project, we don't have to map our activities 
-                //var activitiesToReturn = _maper.Map<List<ActivityDto>>(activities);
+                //var activitiesToReturn = _mapper.Map<List<ActivityDto>>(activities);
 
                 return Result<PagedList<ActivityDto>>.Success(
                     await PagedList<ActivityDto>.CreateAsync(query, request.Params.PageNumber,

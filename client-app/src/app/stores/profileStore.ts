@@ -1,6 +1,6 @@
 import { makeAutoObservable, reaction, runInAction } from 'mobx';
 import agent from '../api/agent';
-import { Photo, Profile } from '../models/profile';
+import { Photo, Profile, UserActivity } from '../models/profile';
 import { store } from './store';
 
 export default class ProfileStore {
@@ -10,6 +10,8 @@ export default class ProfileStore {
   loading = false;
   loadingFollowings = false;
   followings: Profile[] = [];
+  userActivities: UserActivity[] = [];
+  loadingActivities = false;
   activeTab = 0;
 
   constructor() {
@@ -155,6 +157,24 @@ export default class ProfileStore {
     } catch (error) {
       console.log(error);
       runInAction(() => (this.loadingFollowings = false));
+    }
+  };
+
+  loadUserActivities = async (userName: string, predicate?: string) => {
+    //TODO: change predicate from string to enum
+    this.loadingActivities = true;
+    try {
+      //The predicate can be: "future", "past", "hosting"
+      //if the predicate is null, it will be sent to the backend as undefined, and the backend will use the default
+      //filter for this (future events)
+      const activities = await agent.Profiles.listActivities(userName, predicate!);
+      runInAction(() => {
+        this.userActivities = activities;
+        this.loadingActivities = false;
+      });
+    } catch (error) {
+      console.log(error);
+      runInAction(() => (this.loadingActivities = false));
     }
   };
 }
