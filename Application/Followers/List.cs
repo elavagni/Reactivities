@@ -19,13 +19,13 @@ namespace Application.Followers
         public class Handler : IRequestHandler<Query, Result<List<Profiles.Profile>>>
         {
             private readonly DataContext _context;
-            private readonly IMapper _maper;
+            private readonly IMapper _mapper;
             private readonly IUserAccessor _userAccessor;
 
-            public Handler(DataContext context, IMapper maper, IUserAccessor userAccessor)
+            public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
             {
                 this._userAccessor = userAccessor;
-                this._maper = maper;
+                this._mapper = mapper;
                 this._context = context;
 
             }
@@ -39,14 +39,14 @@ namespace Application.Followers
                     case "followers":
                         profiles = await _context.UserFollowings.Where(x => x.Target.UserName == request.UserName)
                             .Select(u => u.Observer)
-                            .ProjectTo<Profiles.Profile>(_maper.ConfigurationProvider,
+                            .ProjectTo<Profiles.Profile>(_mapper.ConfigurationProvider,
                                 new { currentUserName = _userAccessor.GetUserName() })
                             .ToListAsync();
                         break;
                     case "following":
                         profiles = await _context.UserFollowings.Where(x => x.Observer.UserName == request.UserName)
                             .Select(u => u.Target)
-                            .ProjectTo<Profiles.Profile>(_maper.ConfigurationProvider,
+                            .ProjectTo<Profiles.Profile>(_mapper.ConfigurationProvider,
                                new { currentUserName = _userAccessor.GetUserName() })
                             .ToListAsync();
                         break;
