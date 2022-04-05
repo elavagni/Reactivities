@@ -50,6 +50,11 @@ namespace API
 
             app.UseRouting();
 
+            app.UseDefaultFiles();
+            //will serve static files from wwwwroot folder, if we had our static files in a different location, 
+            //we would have to add configuration for that
+            app.UseStaticFiles();
+
             app.UseCors("CorsPolicy");
 
             app.UseAuthentication();
@@ -59,6 +64,7 @@ namespace API
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<ChatHub>("/chat");
+                endpoints.MapFallbackToController("Index", "Fallback");
 
             });
         }
