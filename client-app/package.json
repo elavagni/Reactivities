@@ -37,6 +37,7 @@
     "yup": "^0.32.11"
   },
   "scripts": {
+    "cypress:open": "cypress open",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "postbuild": "mv build ../API/wwwroot",
@@ -64,6 +65,7 @@
   "devDependencies": {
     "@types/react-datepicker": "^4.3.4",
     "@types/uuid": "^8.3.3",
-    "@types/yup": "^0.29.13"
+    "@types/yup": "^0.29.13",
+    "cypress": "^9.5.4"
   }
 }
