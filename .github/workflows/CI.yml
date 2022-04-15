@@ -10,6 +10,5 @@ jobs:
         run: npm init -y && npm install
       - name: Cypress run
         uses: cypress-io/github-action@v2
-        with:          
-          command-prefix: npm      
+        with:                    
           start: npm start
