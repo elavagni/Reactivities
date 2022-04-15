@@ -5,11 +5,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          persist-credentials: false
-      # Install NPM dependencies, cache them correctly
-      # and run all Cypress tests
+        uses: actions/checkout@v2       
+      - name: Setup npm package
+        run: npm init -y && npm install
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:          
