@@ -29,12 +29,17 @@ describe('Login to the application', () => {
     cy.get('div.ui.dimmer').should('not.exist');
     //Display Register form
     cy.contains('Register').click();
-    cy.get('div.ui.dimmer')
-      .contains('Sign up to Reactivities!')
-      .get('input[name=displayName]')
-      .get('input[name=userName]')
-      .get('input[name=email]')
-      .get('input[name=password]');
+    cy.get('div.ui.dimmer').contains('Sign up to Reactivities!');
+    //Check fields and validation
+    cy.get('input[name=displayName]').focus().blur();
+    cy.contains('displayName is a required field');
+    cy.get('input[name=userName]').focus().blur();
+    cy.contains('userName is a required field');
+    cy.get('input[name=email]').focus().blur();
+    cy.contains('email is a required field');
+    cy.get('input[name=password]').focus().blur();
+    cy.contains('password is a required field');
+    //Contains CTA
     cy.contains('Register');
     //Close form
     cy.get('body').click('topLeft');
